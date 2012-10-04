@@ -17,6 +17,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -45,6 +46,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	private IndicatorLayout mIndicatorIvTop;
 	private IndicatorLayout mIndicatorIvBottom;
+	
+	private Drawable indicatorTopBackground;
+	private Drawable indicatorBottomBackground;
 
 	private boolean mShowIndicator;
 	private boolean mScrollEmptyView = true;
@@ -79,6 +83,14 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public boolean getShowIndicator() {
 		return mShowIndicator;
 	}
+	
+	public Drawable getIndicatorTopBackground() {
+	    return mIndicatorIvTop.getBackground();
+	}
+	
+	public Drawable getIndicatorBottomBackground() {
+        return mIndicatorIvBottom.getBackground();
+    }
 
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
@@ -233,11 +245,34 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			removeIndicatorViews();
 		}
 	}
+	
+	public void setIndicatorTopBackground(Drawable background) {
+	    indicatorTopBackground = background;
+	    if(mIndicatorIvTop != null) {
+	        mIndicatorIvTop.setBackground(background);
+	    }
+	}
+	
+	public void setIndicatorBottomBackground(Drawable background) {
+        indicatorBottomBackground = background;
+        if(mIndicatorIvBottom != null) {
+            mIndicatorIvBottom.setBackground(background);
+        }
+    }
 
 	@Override
 	protected void handleStyledAttributes(TypedArray a) {
 		// Set Show Indicator to the XML value, or default value
 		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, !isPullToRefreshOverScrollEnabled());
+		
+		// Set background for top indicator
+        if (a.hasValue(R.styleable.PullToRefresh_ptrIndicatorTopBackground)) {
+            indicatorTopBackground = a.getDrawable(R.styleable.PullToRefresh_ptrIndicatorTopBackground);
+        }
+        // Set background for bottom indicator
+        if (a.hasValue(R.styleable.PullToRefresh_ptrIndicatorBottomBackground)) {
+            indicatorBottomBackground = a.getDrawable(R.styleable.PullToRefresh_ptrIndicatorBottomBackground);
+        }
 	}
 
 	protected boolean isReadyForPullDown() {
@@ -316,6 +351,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (mode.canPullDown() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
 			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
+			if(indicatorTopBackground != null) {
+                mIndicatorIvTop.setBackground(indicatorTopBackground);
+            }
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
@@ -331,6 +369,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (mode.canPullUp() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
 			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
+			if(indicatorBottomBackground != null) {
+			    mIndicatorIvBottom.setBackground(indicatorBottomBackground);
+			}
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);

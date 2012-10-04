@@ -13,6 +13,8 @@
             <flag name="both" value="0x3" />
         </attr>
         <attr name="ptrShowIndicator" format="reference|boolean" />
+        <attr name="ptrIndicatorTopBackground" format="reference|color" />
+        <attr name="ptrIndicatorBottomBackground" format="reference|color" />
         <attr name="ptrDrawable" format="reference" />
         <attr name="ptrOverScroll" format="reference|boolean" />
         <attr name="ptrHeaderTextAppearance" format="reference" />
